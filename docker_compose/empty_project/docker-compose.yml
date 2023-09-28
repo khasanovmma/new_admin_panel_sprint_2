@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  web:
+    container_name: django
+    build: .
+    volumes:
+      - static_volume:/opt/app/static/
+    ports:
+      - 8182:8000
+    env_file:
+      - ./app/config/.env
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+  postgres:
+    container_name: postgres_db
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./app/config/.env
+volumes:
+  postgres_data:
+  static_volume:
