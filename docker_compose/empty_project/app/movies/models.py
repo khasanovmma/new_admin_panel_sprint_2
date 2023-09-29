@@ -55,7 +55,10 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
     description = models.TextField(_("description"))
     creation_date = models.DateField(_("creation date"))
     type = models.CharField(
-        _("type"), choices=FilmworkTypes.choices, default=FilmworkTypes.MOVIE
+        _("type"),
+        choices=FilmworkTypes.choices,
+        default=FilmworkTypes.MOVIE,
+        max_length=10,
     )
     rating = models.FloatField(
         "rating", blank=True, validators=[MinValueValidator(0), MaxValueValidator(100)]
@@ -103,7 +106,6 @@ class Person(UUIDMixin, TimeStampedMixin):
         db_table = 'content"."person'
         verbose_name = _("person")
         verbose_name_plural = _("persons")
-        
 
     def __str__(self) -> str:
         return self.full_name
@@ -124,6 +126,7 @@ class PersonFilmwork(UUIDMixin, CreatedAtMixin):
         verbose_name_plural = _("persons filmworks")
         constraints = [
             models.UniqueConstraint(
-                fields=["film_work", "person", "role"], name="unique_filmwork_person_role"
+                fields=["film_work", "person", "role"],
+                name="unique_filmwork_person_role",
             )
         ]
