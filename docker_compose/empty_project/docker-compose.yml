@@ -1,12 +1,11 @@
-version: '3.9'
+version: '3'
 
 services:
   web:
     build: .
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/opt/app/static/
-    ports:
-      - 8182:8000
     env_file:
       - ./app/config/.env
     depends_on:
@@ -14,21 +13,38 @@ services:
         condition: service_healthy
     networks:
       - default
+    expose:
+      - "8000"
 
   db:
     image: postgres:13-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - $HOME/data:/var/lib/postgresql/data
       - ./etc/postgres/default-init.sql:/docker-entrypoint-initdb.d/default-init.sql
     env_file:
       - ./app/config/.env
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", 'movies_database' ]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
 
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.19.2
+    volumes:
+      - ./etc/nginx:/etc/nginx/conf.d:ro
+      - ./data:/data/:ro
+      - static_volume:/app/static/
+      - media_volume:/app/media/
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+
 volumes:
   postgres_data:
   static_volume:
+  media_volume:
