@@ -16,13 +16,13 @@ RUN apt update && apt install -y netcat-traditional
 RUN  mkdir -p /var/www/static/ \
     && mkdir -p /var/www/media/ \
     && mkdir -p /opt/app/static/ \
-    && mkdir -p /opt/app/media/ \
-    && pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && mkdir -p /opt/app/media/ 
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./app .
 
 COPY entrypoint.sh entrypoint.sh
-
+EXPOSE 8000
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "config.wsgi:application"]
 RUN ["chmod", "+x", "./entrypoint.sh"]
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]

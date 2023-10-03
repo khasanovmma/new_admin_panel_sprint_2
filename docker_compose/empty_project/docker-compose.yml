@@ -3,7 +3,6 @@ version: '3'
 services:
   web:
     build: .
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/opt/app/static/
     env_file:
@@ -12,8 +11,6 @@ services:
       - db
     networks:
       - default
-    expose:
-      - "8000"
 
   db:
     image: postgres:13-alpine
@@ -25,7 +22,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx:1.19.2
+    image: nginx:alpine
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d:ro
       - ./data:/data/:ro
