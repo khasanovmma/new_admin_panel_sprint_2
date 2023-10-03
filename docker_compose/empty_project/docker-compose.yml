@@ -9,8 +9,7 @@ services:
     env_file:
       - ./app/config/.env
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - default
     expose:
@@ -19,17 +18,10 @@ services:
   db:
     image: postgres:13-alpine
     volumes:
-      - $HOME/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
       - ./etc/postgres/default-init.sql:/docker-entrypoint-initdb.d/default-init.sql
     env_file:
       - ./app/config/.env
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
 
   nginx:
     container_name: nginx
