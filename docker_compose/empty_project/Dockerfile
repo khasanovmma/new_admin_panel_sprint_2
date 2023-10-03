@@ -16,8 +16,9 @@ RUN apt update && apt install -y netcat-traditional
 RUN  mkdir -p /var/www/static/ \
     && mkdir -p /var/www/media/ \
     && mkdir -p /opt/app/static/ \
-    && mkdir -p /opt/app/media/ 
-RUN pip install --no-cache-dir -r requirements.txt
+    && mkdir -p /opt/app/media/ \ 
+    && pip install --upgrade pip \ 
+    && pip install --no-cache-dir -r requirements.txt
 
 COPY ./app .
 
