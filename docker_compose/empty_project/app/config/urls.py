@@ -4,5 +4,5 @@ from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('api/movies/', include("movies.urls")),
+    path("api/v1/", include("movies.urls")),
 ]
